@@ -41,19 +41,19 @@ import runtime.daemonmanager.MPJBoot;
 
 public class MPJBoot {
 
-  /* Main function used for test purposes only */
-  /*
-   * public static void main(String[] args) {
-   * 
-   * CLOptions options = new CLOptions(); options.parseCommandLineArgs(args);
-   * options.setCmdType(DMConstants.BOOT); MPJBoot pm = new MPJBoot();
-   * pm.bootMPJExpress(options);
-   * 
-   * }
-   */
+	/* Main function used for test purposes only */
+	/*
+	 * public static void main(String[] args) {
+	 * 
+	 * CLOptions options = new CLOptions(); options.parseCommandLineArgs(args);
+	 * options.setCmdType(DMConstants.BOOT); MPJBoot pm = new MPJBoot();
+	 * pm.bootMPJExpress(options);
+	 * 
+	 * }
+	 */
 
-  public void bootMPJExpress(CLOptions options) {
-    DMThreadUtil.ExecuteCommand(options);
-  }
+	public void bootMPJExpress(CLOptions options) {
+		DMThreadUtil.ExecuteCommand(options);
+	}
 
 }

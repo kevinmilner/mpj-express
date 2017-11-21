@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -42,33 +42,33 @@ import java.util.ArrayList;
 import runtime.common.MPJUtil;
 
 public class HaltThread extends DMThread {
-  private String host = "localhost";
+	private String host = "localhost";
 
-  public HaltThread(String machineName) {
-    host = machineName;
-  }
+	public HaltThread(String machineName) {
+		host = machineName;
+	}
 
-  public void run() {
-    haltMPJExpressDeamons();
-  }
+	public void run() {
+		haltMPJExpressDeamons();
+	}
 
-  public void haltMPJExpressDeamons() {
-    String pid = DaemonUtil.getMPJProcessID(host);
-    if (pid != "") {
-      String[] command = { "ssh", host, "kill", "-9", pid, };
-      ArrayList<String> consoleMessages = DaemonUtil.runProcess(command);
-      for (String message : consoleMessages) {
-	if (message.indexOf(DMMessages.UNKNOWN_HOST) > 0)
-	  System.out.println(MPJUtil.FormatMessage(host,
-	      DMMessages.HOST_INACESSABLE));
-      }
-      pid = DaemonUtil.getMPJProcessID(host);
-      if (pid == "")
-	System.out.println(MPJUtil.FormatMessage(host,
-	    DMMessages.MPJDAEMON_STOPPED));
-    } else
-      System.out.println(MPJUtil.FormatMessage(host,
-	  DMMessages.MPJDAEMON_NOT_AVAILABLE));
-  }
+	public void haltMPJExpressDeamons() {
+		String pid = DaemonUtil.getMPJProcessID(host);
+		if (pid != "") {
+			String[] command = { "ssh", host, "kill", "-9", pid, };
+			ArrayList<String> consoleMessages = DaemonUtil.runProcess(command);
+			for (String message : consoleMessages) {
+				if (message.indexOf(DMMessages.UNKNOWN_HOST) > 0)
+					System.out.println(MPJUtil.FormatMessage(host,
+							DMMessages.HOST_INACESSABLE));
+			}
+			pid = DaemonUtil.getMPJProcessID(host);
+			if (pid == "")
+				System.out.println(MPJUtil.FormatMessage(host,
+						DMMessages.MPJDAEMON_STOPPED));
+		} else
+			System.out.println(MPJUtil.FormatMessage(host,
+					DMMessages.MPJDAEMON_NOT_AVAILABLE));
+	}
 
 }

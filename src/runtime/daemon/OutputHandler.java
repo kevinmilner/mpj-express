@@ -84,92 +84,50 @@ import java.io.OutputStream;
 
 import java.net.Socket;
 
-
-
 class OutputHandler extends Thread {
 
+	Process p = null;
+	Socket sock = null;
 
-
-  Process p = null;
-
-  Socket sock = null;
-
-
-
-  public OutputHandler(Process p, Socket cSock) {
-
-    this.p = p;
-
-    sock = cSock;
-
-  }
-
-
-
-  public void run() {
-
-
-
-    InputStream outp = p.getInputStream();
-
-    String line = "";
-
-    BufferedReader reader = new BufferedReader(new InputStreamReader(outp));
-
-
-
-    if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled()) {
-
-      MPJDaemon.logger.debug("outputting ...");
-
-    }
-
-
-
-    try {
-
-      do {
-
-	if (!line.equals("")) {
-
-	  line.trim();
-
-
-
-	  synchronized (this) {
-
-	    line += "\n";
-
-	    OutputStream outToServer = sock.getOutputStream();
-
-	    DataOutputStream out = new DataOutputStream(outToServer);
-
-	    out.write(line.getBytes(), 0, line.getBytes().length);
-
-	    out.flush();
-
-	  }
-
+	public OutputHandler(Process p, Socket cSock) {
+		this.p = p;
+		sock = cSock;
 	}
 
-      } while ((line = reader.readLine()) != null);
+	public void run() {
+		InputStream outp = p.getInputStream();
+		String line = "";
+		BufferedReader reader = new BufferedReader(new InputStreamReader(outp));
 
-      // && !kill_signal);
+		if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled()) {
+			MPJDaemon.logger.debug("outputting ...");
+		}
 
-    }
+		try {
+			do {
+				if (!line.equals("")) {
+					line.trim();
 
-    catch (Exception e) {
+					synchronized (this) {
+						line += "\n";
+						OutputStream outToServer = sock.getOutputStream();
+						DataOutputStream out = new DataOutputStream(outToServer);
+						out.write(line.getBytes(), 0, line.getBytes().length);
+						out.flush();
+					}
+				}
+			} while ((line = reader.readLine()) != null);
 
-      if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled()) {
+			// && !kill_signal);
+		}
 
-	MPJDaemon.logger.debug("outputHandler =>" + e.getMessage());
+		catch (Exception e) {
+			if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled()) {
+				MPJDaemon.logger.debug("outputHandler =>" + e.getMessage());
+			}
+			e.printStackTrace();
+		}
 
-      }
-
-     e.printStackTrace();
-
-    }
-
-  } // end run.
+	} // end run.
 
 }

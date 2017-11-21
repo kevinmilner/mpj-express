@@ -37,7 +37,6 @@ package runtime.daemonmanager;
  * Updated      : $
  */
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -46,83 +45,82 @@ import runtime.common.MPJUtil;
 
 public class BootThread extends DMThread {
 
-  private String host = "";
-  private String port = "";
-  ProcessBuilder pb = null;
+	private String host = "";
+	private String port = "";
+	ProcessBuilder pb = null;
 
-  public BootThread(String machineName, String daemonPort) {
-    host = machineName;
-    port = daemonPort;
+	public BootThread(String machineName, String daemonPort) {
+		host = machineName;
+		port = daemonPort;
 
-  }
-
-  public void run() {
-    try {
-      bootNetWorkMachines();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void bootNetWorkMachines() throws IOException {
-
-    long tid = Thread.currentThread().getId(); 
-
-    if (validExecutionParams()) {
-      try {
-	String[] command = { "ssh", host, "java", "-cp",
-	    MPJUtil.getJarPath("daemon") + ":.", "runtime.daemon.MPJDaemon",
-	    port,
-	};
-
-	ArrayList<String> consoleMessages = 
-			DaemonUtil.runProcess(command, false);
-	String pid = DaemonUtil.getMPJProcessID(host);
-
-	if(MPJDaemonManager.DEBUG)
-          System.out.println("BootThread.run: tid ="+tid+", pid ="+pid);
-					   
-	if (!pid.equals("") && Integer.parseInt(pid) > -1) {
-	  System.out.println(MPJUtil.FormatMessage(host,
-	      DMMessages.MPJDAEMON_STARTED + pid));
-	} else {
-	  System.out.println(MPJUtil.FormatMessage(host,
-	      DMMessages.MPJDAEMON_NOT_STARTED + pid)); 
-	  for (String message : consoleMessages) //leaving here for legacy 
-	    System.out.println(message); // reasons .. this does not make sense
 	}
-      } catch (Exception ex) {
-	ex.printStackTrace();
-      }
 
-    } 
-  }
+	public void run() {
+		try {
+			bootNetWorkMachines();
+		} catch (Exception e) {
+			if (e instanceof RuntimeException)
+				throw (RuntimeException)e;
+			else
+				throw new RuntimeException(e);
+		}
+	}
 
-  private boolean validExecutionParams() {
+	public void bootNetWorkMachines() throws Exception {
 
-    String pid = DaemonUtil.getMPJProcessID(host);
-    if (!pid.equals("")) {
-      System.out.println(MPJUtil.FormatMessage(host,
-	  DMMessages.MPJDAEMON_ALREADY_RUNNING + pid));
-      return false;
-    }
-    InetAddress address = null;
-    try {
+		long tid = Thread.currentThread().getId();
+		
+		if (!validExecutionParams())
+			throw new IllegalStateException("Can't boot");
 
-      address = InetAddress.getByName(host);
-    }
-    catch (UnknownHostException e) {
+		String[] command = { "ssh", host, "java", "-cp",
+				MPJUtil.getJarPath("daemon") + ":.", "runtime.daemon.MPJDaemon",
+				port,
+		};
 
-      e.printStackTrace();
-      System.out.println(e.getMessage());
-      return false;
-    }
-    if (MPJUtil.IsBusy(address, Integer.parseInt(port))) {
-      System.out.println(MPJUtil.FormatMessage(host, DMMessages.BUSY_PORT));
-      return false;
-    }
+		ArrayList<String> consoleMessages = 
+				DaemonUtil.runProcess(command, false);
+		String pid = DaemonUtil.getMPJProcessID(host);
 
-    return true;
-  }
+		if(MPJDaemonManager.DEBUG)
+			System.out.println("BootThread.run: tid ="+tid+", pid ="+pid);
+
+		if (!pid.equals("") && Integer.parseInt(pid) > -1) {
+			System.out.println(MPJUtil.FormatMessage(host,
+					DMMessages.MPJDAEMON_STARTED + pid));
+		} else {
+			System.out.println(MPJUtil.FormatMessage(host,
+					DMMessages.MPJDAEMON_NOT_STARTED + pid)); 
+			for (String message : consoleMessages) //leaving here for legacy 
+				System.out.println(message); // reasons .. this does not make sense
+		}
+	}
+
+	private boolean validExecutionParams() {
+
+		String pid = DaemonUtil.getMPJProcessID(host);
+		if (!pid.equals("")) {
+			System.out.println(MPJUtil.FormatMessage(host,
+					DMMessages.MPJDAEMON_ALREADY_RUNNING + pid));
+			return false;
+		}
+		InetAddress address = null;
+		try {
+
+			address = InetAddress.getByName(host);
+		}
+		catch (UnknownHostException e) {
+
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+			return false;
+		}
+		if (MPJUtil.IsBusy(address, Integer.parseInt(port))) {
+			System.out.println(MPJUtil.FormatMessage(host, DMMessages.BUSY_PORT));
+			return false;
+		}
+
+		return true;
+	}
 
 }

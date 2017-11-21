@@ -5,25 +5,10 @@
 	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/daemon.jar"/>
-	<classpathentry kind="lib" path="lib/daemonmanager.jar"/>
-	<classpathentry kind="lib" path="lib/hybdev.jar"/>
 	<classpathentry kind="lib" path="lib/javax.servlet.jar"/>
-	<classpathentry kind="lib" path="lib/loader1.jar"/>
-	<classpathentry kind="lib" path="lib/loader2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/mpi.jar"/>
-	<classpathentry kind="lib" path="lib/mpiExp.jar"/>
-	<classpathentry kind="lib" path="lib/mpj.jar"/>
-	<classpathentry kind="lib" path="lib/mpjbuf.jar"/>
-	<classpathentry kind="lib" path="lib/mpjdev.jar"/>
-	<classpathentry kind="lib" path="lib/mxdev.jar"/>
-	<classpathentry kind="lib" path="lib/niodev.jar"/>
-	<classpathentry kind="lib" path="lib/runtimecommon.jar"/>
-	<classpathentry kind="lib" path="lib/smpdev.jar"/>
-	<classpathentry kind="lib" path="lib/starter.jar"/>
 	<classpathentry kind="lib" path="lib/tools.jar"/>
-	<classpathentry kind="lib" path="lib/xdev.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-common-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-yarn-common-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-yarn-api-2.9.0.jar"/>
