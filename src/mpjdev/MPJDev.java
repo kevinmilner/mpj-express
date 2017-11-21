@@ -46,74 +46,74 @@ import mpjdev.Constants;
 
 public class MPJDev {
 
-  public static String deviceName;
-  public static mpjdev.Comm WORLD = null;
-  public static Device dev = null;
+	public static String deviceName;
+	public static mpjdev.Comm WORLD = null;
+	public static Device dev = null;
 
-  public static Device init(String args[]) throws MPJDevException {
+	public static Device init(String args[]) throws MPJDevException {
 
-    if (args.length < 3) {
+		if (args.length < 3) {
 
-      throw new MPJDevException("Usage (for javampjdev): "
-	  + "java MPJDev <myrank> <conf_file> <device_name>"
-	  + "conf_file can be, ../conf/xdev.conf <Local>"
-	  + "OR http://holly.dsg.port.ac.uk:15000/xdev.conf <Remote>"
-	  + "\nUsage (for natmpjdev): " + "java MPJDev <x> <x> <device_name>"
-	  + "ignore the first two arguments" + "device name = native");
+			throw new MPJDevException("Usage (for javampjdev): "
+					+ "java MPJDev <myrank> <conf_file> <device_name>"
+					+ "conf_file can be, ../conf/xdev.conf <Local>"
+					+ "OR http://holly.dsg.port.ac.uk:15000/xdev.conf <Remote>"
+					+ "\nUsage (for natmpjdev): " + "java MPJDev <x> <x> <device_name>"
+					+ "ignore the first two arguments" + "device name = native");
 
-    }
+		}
 
-    deviceName = args[2]; // get and set the device name
+		deviceName = args[2]; // get and set the device name
 
-    if (deviceName.equals("native")) {
-      // for Native
-      Constants.isNative = true;
+		if (deviceName.equals("native")) {
+			// for Native
+			Constants.isNative = true;
 
-      mpjdev.natmpjdev.MPJDev.init(args);
-      WORLD = mpjdev.natmpjdev.MPJDev.WORLD;
+			mpjdev.natmpjdev.MPJDev.init(args);
+			WORLD = mpjdev.natmpjdev.MPJDev.WORLD;
 
 
-    } else {
-      // for javampjdev
-      Constants.isNative = false;
+		} else {
+			// for javampjdev
+			Constants.isNative = false;
 
-      dev = mpjdev.javampjdev.MPJDev.init(args);
-      WORLD = mpjdev.javampjdev.MPJDev.WORLD;
-      
-    }
+			dev = mpjdev.javampjdev.MPJDev.init(args);
+			WORLD = mpjdev.javampjdev.MPJDev.WORLD;
 
-    return dev;
+		}
 
-  }
+		return dev;
 
-  /**
-   * Gets the overhead incurred by send methods. It should be called after
-   * calling #init(String[] args) method
-   * 
-   * @return int An integer specifying the overhead incurred by send methods
-   */
+	}
 
-  public static int getSendOverhead() {
-    if (Constants.isNative) {
-      return mpjdev.natmpjdev.MPJDev.getRecvOverhead();
-    } else
-      return mpjdev.javampjdev.MPJDev.getSendOverhead();
-  }
+	/**
+	 * Gets the overhead incurred by send methods. It should be called after
+	 * calling #init(String[] args) method
+	 * 
+	 * @return int An integer specifying the overhead incurred by send methods
+	 */
 
-  public static int getRecvOverhead() {
-    if (Constants.isNative) {
-      return mpjdev.natmpjdev.MPJDev.getRecvOverhead();
-    } else
-      return mpjdev.javampjdev.MPJDev.getRecvOverhead();
-  }
+	public static int getSendOverhead() {
+		if (Constants.isNative) {
+			return mpjdev.natmpjdev.MPJDev.getRecvOverhead();
+		} else
+			return mpjdev.javampjdev.MPJDev.getSendOverhead();
+	}
 
-  public static void finish() throws MPJDevException {
-    if (Constants.isNative) {
-   
-    mpjdev.natmpjdev.MPJDev.finish();
-    } else {
-      mpjdev.javampjdev.MPJDev.finish();
-    }
-  }
+	public static int getRecvOverhead() {
+		if (Constants.isNative) {
+			return mpjdev.natmpjdev.MPJDev.getRecvOverhead();
+		} else
+			return mpjdev.javampjdev.MPJDev.getRecvOverhead();
+	}
+
+	public static void finish() throws MPJDevException {
+		if (Constants.isNative) {
+
+			mpjdev.natmpjdev.MPJDev.finish();
+		} else {
+			mpjdev.javampjdev.MPJDev.finish();
+		}
+	}
 
 }
