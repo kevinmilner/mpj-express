@@ -201,7 +201,9 @@ public class ProcessLauncher extends Thread {
 					logger.debug("Job Finished");
 
 				if (!DEBUG || !logger.isDebugEnabled()) {
-					FileUtils.deleteDirectory(new File(argManager.getUsersDir()));
+					File dir = new File(argManager.getUsersDir());
+					if (dir.exists())
+						FileUtils.deleteDirectory(dir);
 				}
 			}
 			catch (IOException e1) {
