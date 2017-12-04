@@ -36,6 +36,9 @@ while [[ $TRIES -le $MAX_TRIES ]];do
 	if [[ $TRIES -gt 0 ]];then
 		echo "retry $TRIES"
 	fi
+	# choose a new random port to try
+	DPORT=$(shuf -i 62000-64999 -n 1)
+	SPORT=$(shuf -i 60000-61999 -n 1)
 	echo "Daemon port: $DPORT. LSOF:"
 	lsof -i :$DPORT
 	echo "Server port: $SPORT. LSOF:"
@@ -65,9 +68,5 @@ while [[ $TRIES -le $MAX_TRIES ]];do
 	fi
 	echo "sleeping for $SLEEP_TIME seconds"
 	sleep $SLEEP_TIME
-	# choose a new random port to try
-	DPORT=$(shuf -i 62000-64999 -n 1)
-	SPORT=$(shuf -i 60000-61999 -n 1)
-	echo "New random ports: $DPORT $SPORT"
 	let TRIES=TRIES+1
 done
