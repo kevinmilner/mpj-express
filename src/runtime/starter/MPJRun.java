@@ -1181,7 +1181,7 @@ public class MPJRun {
 		}
 		catch (Exception e) {
 			System.err.println("[MPJRun.java]: Error opening server port..");
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
 		if (deviceName.equals("hybdev")) {
