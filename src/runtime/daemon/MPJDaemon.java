@@ -178,11 +178,11 @@ public class MPJDaemon {
 					logger.debug("Accepting connection ..");
 				}
 				Socket servSock = null; 
-				try {
+//				try {
 					servSock = serverSocket.accept();
-				} catch(Exception eee) { 
-					eee.printStackTrace(); 
-				} 
+//				} catch(Exception eee) { 
+//					eee.printStackTrace(); 
+//				} 
 
 				// Connection is accepted and the socket passed onto 
 				// ProcessLauncher.java which takes care of the rest
@@ -201,6 +201,8 @@ public class MPJDaemon {
 		} 
 		catch (Exception e) { 
 			e.printStackTrace();
+			System.out.println("Unable to attach to port!");
+			System.exit(3);
 		}
 
 		if (!serverSocket.isClosed())
