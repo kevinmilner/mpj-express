@@ -202,8 +202,13 @@ public class ProcessLauncher extends Thread {
 
 				if (!DEBUG || !logger.isDebugEnabled()) {
 					File dir = new File(argManager.getUsersDir());
-					if (dir.exists())
-						FileUtils.deleteDirectory(dir);
+					if (dir.exists()) {
+						try {
+							FileUtils.deleteDirectory(dir);
+						} catch (IOException e2) {
+							 // multiple nodes will try to delete, causing an exception
+						}
+					}
 				}
 			}
 			catch (IOException e1) {
@@ -258,7 +263,7 @@ public class ProcessLauncher extends Thread {
 			}
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace(); // multiple nodes will try to delete, causing an exception
 		}
 
 	}
