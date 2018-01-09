@@ -189,7 +189,8 @@ public class HybridStarter {
               }
 
             } catch (Exception exx) {
-              exx.printStackTrace();
+            	exx.printStackTrace();
+            	System.exit(3);
             }
 
             arvs[1] = config;
@@ -217,6 +218,8 @@ public class HybridStarter {
                 method[index] = m[index];
               }
             } catch (Exception exp) {
+            	exp.printStackTrace();
+            	System.exit(3);
             }
             // //// placed end //////
           } // end monitor
@@ -252,7 +255,7 @@ public class HybridStarter {
 
               e.printStackTrace();
               tryAgain = false;
-              System.exit(0);
+              System.exit(3);
               // tryAgain = true;
               // System.out.println(" exception while invoking in " +
               // Thread.currentThread());
