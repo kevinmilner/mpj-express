@@ -7,7 +7,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -46,43 +46,50 @@ import java.util.Scanner;
 
 public class IOMessagesThread extends Thread {
 
-  Socket clientSock;
+	Socket clientSock;
 
-  public IOMessagesThread(Socket clientSock) {
-    this.clientSock = clientSock;
-  }
+	public IOMessagesThread(Socket clientSock) {
+		this.clientSock = clientSock;
+	}
 
-  @Override
-  public void run() {
-    serverSocketInit();
-  }
-  private void serverSocketInit() {
-    Scanner input = null;
-    PrintWriter output = null;
-    try {
-      input = new Scanner(clientSock.getInputStream());
-      output = new PrintWriter(clientSock.getOutputStream(), true);
-      String message = input.nextLine();
-      while (!(message.endsWith("EXIT"))) {
-        if(!message.startsWith("@Ping#"))
-          System.out.println(message);
-          message = input.nextLine();
-      }
+	@Override
+	public void run() {
+		serverSocketInit();
+	}
+	private void serverSocketInit() {
+		Scanner input = null;
+		PrintWriter output = null;
+		boolean fail = false;
+		try {
+			input = new Scanner(clientSock.getInputStream());
+			output = new PrintWriter(clientSock.getOutputStream(), true);
+			String message = input.nextLine();
+			while (!(message.endsWith("EXIT"))) {
+				if(!message.startsWith("@Ping#"))
+					System.out.println(message);
+				message = input.nextLine();
+			}
 
-    }
-    catch (Exception cce) {
-      cce.printStackTrace();
-    }
-    finally {
-      try {
-        clientSock.close();
-        input.close();
-        output.close();
-      }
-      catch (IOException ioEx) {
-        ioEx.printStackTrace();
-      }
-    }
-  }
+		}
+		catch (Exception cce) {
+			cce.printStackTrace();
+			fail = true;
+		}
+		finally {
+			try {
+				clientSock.close();
+				input.close();
+				output.close();
+			}
+			catch (IOException ioEx) {
+				ioEx.printStackTrace();
+				fail = true;
+			}
+			if (fail) {
+				System.out.println(IOMessagesThread.class.getName()+" failure detected, exiting");
+				System.exit(3);
+			}
+		}
+	}
 
 }
