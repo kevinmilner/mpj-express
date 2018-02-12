@@ -7,7 +7,7 @@
    3. Mohsan Jameel (2013 - 2013)
    4. Aamir Shafi (2005 -2013) 
    5. Bryan Carpenter (2005 - 2013)
- 
+
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
  "Software"), to deal in the Software without restriction, including
@@ -55,267 +55,275 @@ import xdev.smpdev.SMPDevProcess;
 
 public class HybridStarter {
 
-  String wdir = null;
-  String config = null;
-  int processes = 0;
-  JarClassLoader classLoader = null;
-  URLClassLoader urlClassLoader = null;
-  String name = null;
-  String className = null;
-  String deviceName = null;
-  String packageName = null;
-  String cmdClassPath = null;
-  String mpjHomeDir = null;
-  String[] nargs = null;
-  String loader = null;
-  String hostName = null;
-  String[] arvs = null;
-  Method[] m;
-  Method[] method;
-  int x;
-  Class[] c;
-  int num;
-  static final Object monitor = new Object();
-  SMPDevProcess[] smpProcess;
-  Integer rank = new Integer(-1);
-  static String appPath = "";
+	String wdir = null;
+	String config = null;
+	int processes = 0;
+	JarClassLoader classLoader = null;
+	URLClassLoader urlClassLoader = null;
+	String name = null;
+	String className = null;
+	String deviceName = null;
+	String packageName = null;
+	String cmdClassPath = null;
+	String mpjHomeDir = null;
+	String[] nargs = null;
+	String loader = null;
+	String hostName = null;
+	String[] arvs = null;
+	Method[] m;
+	Method[] method;
+	int x;
+	Class[] c;
+	int num;
+	static final Object monitor = new Object();
+	SMPDevProcess[] smpProcess;
+	Integer rank = new Integer(-1);
+	static String appPath = "";
 
-  public HybridStarter() {
-  }
+	public HybridStarter() {
+	}
 
-  /**
-   * Executes MPJ program in a new JVM. This method is invoked in main method of
-   * this class, which is started by MPJDaemon. This method can only start a new
-   * JVM but can't start multiple threads in one JVM.
-   * 
-   * @param args
-   *          Arguments to this method. args[0] is wdir 'String', args[1] number
-   *          of processes, args[2] is deviceName, and args[3] is rank started
-   *          by this process. args[4] is className ... it will only be used if
-   *          URL does not point to a JAR file.
-   */
-  public void execute(String args[]) throws Exception {
-    
-    //FIX ME: HAMZA
-    //TAU was replacing spaces in conf file contents with newline char    
-    args[9]=args[9].replace('|',' ');
+	/**
+	 * Executes MPJ program in a new JVM. This method is invoked in main method of
+	 * this class, which is started by MPJDaemon. This method can only start a new
+	 * JVM but can't start multiple threads in one JVM.
+	 * 
+	 * @param args
+	 *          Arguments to this method. args[0] is wdir 'String', args[1] number
+	 *          of processes, args[2] is deviceName, and args[3] is rank started
+	 *          by this process. args[4] is className ... it will only be used if
+	 *          URL does not point to a JAR file.
+	 */
+	public void execute(String args[]) throws Exception {
 
-    InetAddress localaddr = InetAddress.getLocalHost();
-    hostName = localaddr.getHostName();
-    wdir = args[0]; // this contains working directory ...
-    processes = (new Integer(args[1])).intValue();
-    deviceName = args[2];
-    loader = args[3];
-    cmdClassPath = args[4];
-    className = args[5];
-    int ARGS_USED_HERE = 6;
-    nargs = new String[(args.length - ARGS_USED_HERE)];
-    System.arraycopy(args, ARGS_USED_HERE, nargs, 0, nargs.length);
+		//FIX ME: HAMZA
+		//TAU was replacing spaces in conf file contents with newline char    
+		args[9]=args[9].replace('|',' ');
 
-    arvs = new String[(nargs.length + 3)];
+		InetAddress localaddr = InetAddress.getLocalHost();
+		hostName = localaddr.getHostName();
+		wdir = args[0]; // this contains working directory ...
+		processes = (new Integer(args[1])).intValue();
+		deviceName = args[2];
+		loader = args[3];
+		cmdClassPath = args[4];
+		className = args[5];
+		int ARGS_USED_HERE = 6;
+		nargs = new String[(args.length - ARGS_USED_HERE)];
+		System.arraycopy(args, ARGS_USED_HERE, nargs, 0, nargs.length);
 
-    Runnable[] ab = new Runnable[processes];
+		arvs = new String[(nargs.length + 3)];
 
-    smpProcess = new SMPDevProcess[processes];
-    c = new Class[processes];
-    m = new Method[processes];
-    method = new Method[processes];
+		Runnable[] ab = new Runnable[processes];
 
-    for (x = 0; x < processes; x++) {
-      // System.out.println("x " + x);
-      ab[x] = new Runnable() {
+		smpProcess = new SMPDevProcess[processes];
+		c = new Class[processes];
+		m = new Method[processes];
+		method = new Method[processes];
 
-        String argNew[] = new String[arvs.length];
+		for (x = 0; x < processes; x++) {
+			// System.out.println("x " + x);
+			ab[x] = new Runnable() {
 
-        public void run() {
+				String argNew[] = new String[arvs.length];
 
-          int index = Integer.parseInt(Thread.currentThread().getName());
+				public void run() {
 
-          synchronized (monitor) {
+					int index = Integer.parseInt(Thread.currentThread().getName());
 
-            try {
-              String mpjHome = RTConstants.MPJ_HOME_DIR;
+					synchronized (monitor) {
 
-              String libPath = null;
+						try {
+							String mpjHome = RTConstants.MPJ_HOME_DIR;
 
-              if (!cmdClassPath.equals("EMPTY")) {
-                libPath = cmdClassPath + File.pathSeparator + mpjHome
-                    + "/lib/mpi.jar" + File.pathSeparator + mpjHome
-                    + "/lib/mpjdev.jar";
-              } else {
-                libPath = mpjHome + "/lib/mpi.jar" + File.pathSeparator
-                    + mpjHome + "/lib/mpjdev.jar";
-              }
+							String libPath = null;
 
-              if (className.endsWith(".jar")) {
-                if ((new File(className)).isAbsolute()) {
-                  appPath = className;
-                } else {
-                  appPath = wdir + "/" + className;
-                }
-              } else {
-                appPath = wdir;
-              }
+							if (!cmdClassPath.equals("EMPTY")) {
+								libPath = cmdClassPath + File.pathSeparator + mpjHome
+										+ "/lib/mpi.jar" + File.pathSeparator + mpjHome
+										+ "/lib/mpjdev.jar";
+							} else {
+								libPath = mpjHome + "/lib/mpi.jar" + File.pathSeparator
+										+ mpjHome + "/lib/mpjdev.jar";
+							}
 
-              appPath = appPath + File.pathSeparator + libPath;
+							if (className.endsWith(".jar")) {
+								if ((new File(className)).isAbsolute()) {
+									appPath = className;
+								} else {
+									appPath = wdir + "/" + className;
+								}
+							} else {
+								appPath = wdir;
+							}
 
-              ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
+							appPath = appPath + File.pathSeparator + libPath;
 
-              StringTokenizer tok = new StringTokenizer(appPath,
-                  File.pathSeparator);
-              int count = tok.countTokens();
-              String[] tokArr = new String[count];
-              File[] f = new File[count];
-              URL[] urls = new URL[count];
+							ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
 
-              for (int i = 0; i < count; i++) {
-                tokArr[i] = tok.nextToken();
-                f[i] = new File(tokArr[i]);
-                urls[i] = f[i].toURI().toURL();
-              }
+							StringTokenizer tok = new StringTokenizer(appPath,
+									File.pathSeparator);
+							int count = tok.countTokens();
+							String[] tokArr = new String[count];
+							File[] f = new File[count];
+							URL[] urls = new URL[count];
 
-              URLClassLoader ucl = new URLClassLoader(urls);
-              Thread.currentThread().setContextClassLoader(ucl);
+							for (int i = 0; i < count; i++) {
+								tokArr[i] = tok.nextToken();
+								f[i] = new File(tokArr[i]);
+								urls[i] = f[i].toURI().toURL();
+							}
 
-              if (className.endsWith(".jar")) {
-                String jarFileName = className;
-                JarFile jarFile = new JarFile(jarFileName);
-                Attributes attr = jarFile.getManifest().getMainAttributes();
-                name = attr.getValue(Attributes.Name.MAIN_CLASS);
-                c[index] = Class.forName(name, true, ucl);
-              } else {
-                name = className;
-                c[index] = Class.forName(name, true, ucl);
-              }
+							URLClassLoader ucl = new URLClassLoader(urls);
+							Thread.currentThread().setContextClassLoader(ucl);
 
-            } catch (Exception exx) {
-            	exx.printStackTrace();
-            	System.exit(3);
-            }
+							if (className.endsWith(".jar")) {
+								String jarFileName = className;
+								JarFile jarFile = new JarFile(jarFileName);
+								Attributes attr = jarFile.getManifest().getMainAttributes();
+								name = attr.getValue(Attributes.Name.MAIN_CLASS);
+								c[index] = Class.forName(name, true, ucl);
+							} else {
+								name = className;
+								c[index] = Class.forName(name, true, ucl);
+							}
 
-            arvs[1] = config;
-            arvs[2] = deviceName;
+						} catch (Exception exx) {
+							exx.printStackTrace();
+							System.exit(3);
+						}
 
-            for (int i = 0; i < nargs.length; i++) {
-              arvs[i + 3] = nargs[i];
-            }
+						arvs[1] = config;
+						arvs[2] = deviceName;
 
-            try {
+						for (int i = 0; i < nargs.length; i++) {
+							arvs[i + 3] = nargs[i];
+						}
 
-              if (classLoader != null && loader.equals("useRemoteLoader")) {
-                // System.out.println("Remote loader invoking class");
-                classLoader.invokeClass(c[num], arvs);
-              } else {
+						try {
 
-                m[index] = c[index].getMethod("main",
-                    new Class[] { arvs.getClass() });
-                m[index].setAccessible(true);
-                int mods = m[index].getModifiers();
-                if (m[index].getReturnType() != void.class
-                    || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
-                  throw new NoSuchMethodException("main");
-                }
-                method[index] = m[index];
-              }
-            } catch (Exception exp) {
-            	exp.printStackTrace();
-            	System.exit(3);
-            }
-            // //// placed end //////
-          } // end monitor
+							if (classLoader != null && loader.equals("useRemoteLoader")) {
+								// System.out.println("Remote loader invoking class");
+								classLoader.invokeClass(c[num], arvs);
+							} else {
 
-          synchronized (monitor) {
-            int val = rank.intValue();
-            val++;
-            rank = new Integer(val);
-            arvs[0] = rank.toString();
-            argNew[0] = rank.toString();
-          }
+								m[index] = c[index].getMethod("main",
+										new Class[] { arvs.getClass() });
+								m[index].setAccessible(true);
+								int mods = m[index].getModifiers();
+								if (m[index].getReturnType() != void.class
+										|| !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
+									throw new NoSuchMethodException("main");
+								}
+								method[index] = m[index];
+							}
+						} catch (Exception exp) {
+							exp.printStackTrace();
+							System.exit(3);
+						}
+						// //// placed end //////
+					} // end monitor
 
-          for (int k = 1; k < arvs.length; k++) {
-            argNew[k] = arvs[k];
-          }
+					synchronized (monitor) {
+						int val = rank.intValue();
+						val++;
+						rank = new Integer(val);
+						arvs[0] = rank.toString();
+						argNew[0] = rank.toString();
+					}
 
-          // FIXME: need an elegant way to fill the index 1
-          // element, the issue is that it's filled earlier
-          // and here we are actually re-writing it ..
-          // don't like it ..but atleast works now!
-          argNew[1] = (new Integer(processes)).toString();
+					for (int k = 1; k < arvs.length; k++) {
+						argNew[k] = arvs[k];
+					}
 
-          boolean tryAgain = true;
+					// FIXME: need an elegant way to fill the index 1
+					// element, the issue is that it's filled earlier
+					// and here we are actually re-writing it ..
+					// don't like it ..but atleast works now!
+					argNew[1] = (new Integer(processes)).toString();
 
-          while (tryAgain) {
+					int maxFailures = 3;
+					int numFailures = 0;
+					boolean tryAgain = true;
 
-            try {
+					while (tryAgain) {
 
-              method[index].invoke(null, new Object[] { argNew });
-              tryAgain = false;
+						try {
 
-            } catch (Exception e) {
+							method[index].invoke(null, new Object[] { argNew });
+							tryAgain = false;
 
-              e.printStackTrace();
-              tryAgain = false;
-              System.exit(3);
-              // tryAgain = true;
-              // System.out.println(" exception while invoking in " +
-              // Thread.currentThread());
-              // goto TRY_AGAIN ;
-              // This should not happen, as we have disabled access checks
-            }
-          }
+						} catch (Exception e) {
 
-        }
-      };
-    }
+							e.printStackTrace();
+							numFailures++;
+							System.out.println("That was failure "+numFailures+"/"+maxFailures);
+							tryAgain = numFailures < maxFailures;
+							//              tryAgain = false;
+							if (!tryAgain) {
+								System.out.println("Exiting");
+								System.exit(3); 
+							}
+							// tryAgain = true;
+							// System.out.println(" exception while invoking in " +
+							// Thread.currentThread());
+							// goto TRY_AGAIN ;
+							// This should not happen, as we have disabled access checks
+						}
+					}
 
-    try {
-      int nprocs = processes;
-      Thread procs[] = new Thread[nprocs];
-      // System.out.println("nprocs " + nprocs);
-      // FIX ME By Aleem Akhtar :
-      // setting all threads thred group to MPI${rank}.
-      // so that we can differeniate them from other threads i.e. system threads
-      for (num = 0; num < nprocs; num++) {
-        // procs[num] = new Thread(ab[num]);
-        // smpProcess[num] = new SMPDevProcess("smp-threadgroup"+num);
-        smpProcess[num] = new SMPDevProcess("MPI" + num);
-        procs[num] = new Thread(smpProcess[num], ab[num], "" + nprocs);
-        String name = String.valueOf(num);
-        procs[num].setName(name);
-        procs[num].start();
+				}
+			};
+		}
 
-        // System.out.println("thread after start" + num+" Thread "+
-        // Thread.currentThread()+" Time "+System.nanoTime());
-        // procs[num].join();
-        // Thread.currentThread().sleep(500);
-      }
-      for (int i = 0; i < nprocs; i++) {
-        procs[i].join();
-      }
+		try {
+			int nprocs = processes;
+			Thread procs[] = new Thread[nprocs];
+			// System.out.println("nprocs " + nprocs);
+			// FIX ME By Aleem Akhtar :
+			// setting all threads thred group to MPI${rank}.
+			// so that we can differeniate them from other threads i.e. system threads
+			for (num = 0; num < nprocs; num++) {
+				// procs[num] = new Thread(ab[num]);
+				// smpProcess[num] = new SMPDevProcess("smp-threadgroup"+num);
+				smpProcess[num] = new SMPDevProcess("MPI" + num);
+				procs[num] = new Thread(smpProcess[num], ab[num], "" + nprocs);
+				String name = String.valueOf(num);
+				procs[num].setName(name);
+				procs[num].start();
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  } // end execute
+				// System.out.println("thread after start" + num+" Thread "+
+				// Thread.currentThread()+" Time "+System.nanoTime());
+				// procs[num].join();
+				// Thread.currentThread().sleep(500);
+			}
+			for (int i = 0; i < nprocs; i++) {
+				procs[i].join();
+			}
 
-  public static void main(String args[]) throws Exception {
-    /*
-     * if(MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled()) {
-     * MPJDaemon.logger.debug ("HybridDaemon.HybridStarter: Starting Thread"); }
-     */
-    HybridStarter mstarter = new HybridStarter();
-    mstarter.execute(args);
-  } // end main
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	} // end execute
 
-  public static void visitAllDirs(File dir) {
-    if (dir.isDirectory()) {
-      appPath += dir + ":";
+	public static void main(String args[]) throws Exception {
+		/*
+		 * if(MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled()) {
+		 * MPJDaemon.logger.debug ("HybridDaemon.HybridStarter: Starting Thread"); }
+		 */
+		HybridStarter mstarter = new HybridStarter();
+		mstarter.execute(args);
+	} // end main
 
-      String[] children = dir.list();
-      for (int i = 0; i < children.length; i++) {
-        visitAllDirs(new File(dir, children[i]));
-      }
-    }
-  }
+	public static void visitAllDirs(File dir) {
+		if (dir.isDirectory()) {
+			appPath += dir + ":";
+
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++) {
+				visitAllDirs(new File(dir, children[i]));
+			}
+		}
+	}
 
 }
