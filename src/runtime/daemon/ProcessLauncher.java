@@ -205,7 +205,7 @@ public class ProcessLauncher extends Thread {
 					if (dir.exists()) {
 						try {
 							FileUtils.deleteDirectory(dir);
-						} catch (IOException e2) {
+						} catch (Exception e2) {
 							 // multiple nodes will try to delete, causing an exception
 						}
 					}
@@ -262,7 +262,7 @@ public class ProcessLauncher extends Thread {
 					FileUtils.deleteDirectory(dir);
 			}
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 //			e.printStackTrace(); // multiple nodes will try to delete, causing an exception
 		}
 
