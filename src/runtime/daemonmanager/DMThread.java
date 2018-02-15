@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2014)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -39,7 +39,13 @@ package runtime.daemonmanager;
 
 public class DMThread extends Thread {
 
-  public DMThread() {
+	protected Exception e;
 
-  }
+	public DMThread() {
+
+	}
+
+	public Exception getException() {
+		return e;
+	}
 }

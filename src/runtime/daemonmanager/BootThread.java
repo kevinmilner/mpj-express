@@ -59,10 +59,7 @@ public class BootThread extends DMThread {
 		try {
 			bootNetWorkMachines();
 		} catch (Exception e) {
-			if (e instanceof RuntimeException)
-				throw (RuntimeException)e;
-			else
-				throw new RuntimeException(e);
+			this.e = e;
 		}
 	}
 

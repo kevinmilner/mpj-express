@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -40,16 +40,16 @@ import runtime.daemonmanager.MPJStatus;
 
 public class MPJStatus {
 
-  /*
-   * public static void main(String[] args) {
-   * 
-   * CLOptions options = new CLOptions(); options.parseCommandLineArgs(args);
-   * MPJStatus status = new MPJStatus(); status.getMPJExpressStatus(options);
-   * 
-   * }
-   */
+	/*
+	 * public static void main(String[] args) {
+	 * 
+	 * CLOptions options = new CLOptions(); options.parseCommandLineArgs(args);
+	 * MPJStatus status = new MPJStatus(); status.getMPJExpressStatus(options);
+	 * 
+	 * }
+	 */
 
-  public void getMPJExpressStatus(CLOptions options) {
-    DMThreadUtil.ExecuteCommand(options);
-  }
+	public void getMPJExpressStatus(CLOptions options) throws Exception {
+		DMThreadUtil.ExecuteCommand(options);
+	}
 }

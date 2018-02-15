@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -42,28 +42,32 @@ import runtime.common.MPJUtil;
 
 public class CleanUpThread extends DMThread {
 
-  private String host = "localhost";
+	private String host = "localhost";
 
-  public CleanUpThread(String machineName) {
-    host = machineName;
-  }
+	public CleanUpThread(String machineName) {
+		host = machineName;
+	}
 
-  public void run() {
-    cleanUpAllJavaProcesses();
-  }
+	public void run() {
+		try {
+			cleanUpAllJavaProcesses();
+		} catch (Exception e) {
+			this.e = e;
+		}
+	}
 
-  public void cleanUpAllJavaProcesses() {
+	public void cleanUpAllJavaProcesses() {
 
-    String[] command = { "ssh", host, "pkill", "-9", "java", };
-    ArrayList<String> consoleMessages = DaemonUtil.runProcess(command);
-    for (String message : consoleMessages) {
-      if (message.indexOf(DMMessages.UNKNOWN_HOST) > 0) {
-	System.out.println(MPJUtil.FormatMessage(host,
-	    DMMessages.HOST_INACESSABLE));
-	return;
-      }
-    }
-    System.out.println(MPJUtil.FormatMessage(host,
-	DMMessages.JAVA_PROCESS_KILLED));
-  }
+		String[] command = { "ssh", host, "pkill", "-9", "java", };
+		ArrayList<String> consoleMessages = DaemonUtil.runProcess(command);
+		for (String message : consoleMessages) {
+			if (message.indexOf(DMMessages.UNKNOWN_HOST) > 0) {
+				System.out.println(MPJUtil.FormatMessage(host,
+						DMMessages.HOST_INACESSABLE));
+				return;
+			}
+		}
+		System.out.println(MPJUtil.FormatMessage(host,
+				DMMessages.JAVA_PROCESS_KILLED));
+	}
 }

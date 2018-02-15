@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -39,24 +39,28 @@ package runtime.daemonmanager;
 import runtime.common.MPJUtil;
 
 public class StatusThread extends DMThread {
-  private String host = "localhost";
+	private String host = "localhost";
 
-  public StatusThread(String machineName) {
-    host = machineName;
-  }
+	public StatusThread(String machineName) {
+		host = machineName;
+	}
 
-  public void run() {
-    queryMPJExpressDeamons();
-  }
+	public void run() {
+		try {
+			queryMPJExpressDeamons();
+		} catch (Exception e) {
+			this.e = e;
+		}
+	}
 
-  public void queryMPJExpressDeamons() {
-    String pid = DaemonUtil.getMPJProcessID(host);
-    if (pid != "")
-      System.out.println(MPJUtil.FormatMessage(host,
-	  DMMessages.MPJDAEMON_AVAILABLE + pid));
-    else
-      System.out.println(MPJUtil.FormatMessage(host,
-	  DMMessages.MPJDAEMON_NOT_AVAILABLE));
-  }
+	public void queryMPJExpressDeamons() {
+		String pid = DaemonUtil.getMPJProcessID(host);
+		if (pid != "")
+			System.out.println(MPJUtil.FormatMessage(host,
+					DMMessages.MPJDAEMON_AVAILABLE + pid));
+		else
+			System.out.println(MPJUtil.FormatMessage(host,
+					DMMessages.MPJDAEMON_NOT_AVAILABLE));
+	}
 
 }

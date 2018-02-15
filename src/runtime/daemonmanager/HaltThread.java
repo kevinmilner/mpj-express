@@ -49,7 +49,11 @@ public class HaltThread extends DMThread {
 	}
 
 	public void run() {
-		haltMPJExpressDeamons();
+		try {
+			haltMPJExpressDeamons();
+		} catch (Exception e) {
+			this.e = e;
+		}
 	}
 
 	public void haltMPJExpressDeamons() {

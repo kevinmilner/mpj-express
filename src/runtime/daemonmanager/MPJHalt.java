@@ -50,7 +50,7 @@ public class MPJHalt {
 	 * }
 	 */
 
-	public void haltMPJExpress(CLOptions options) {
+	public void haltMPJExpress(CLOptions options) throws Exception {
 		DMThreadUtil.ExecuteCommand(options);
 	}
 }

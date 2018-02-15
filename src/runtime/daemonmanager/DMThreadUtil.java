@@ -54,7 +54,7 @@ public class DMThreadUtil {
 		return Executors.newFixedThreadPool(nThreads);
 	}
 
-	public static void ExecuteThreads(ArrayList<Thread> threads, int nThreads) {
+	public static void ExecuteThreads(ArrayList<DMThread> threads, int nThreads) throws Exception {
 
 		ExecutorService tpes = getThreadExecutor(nThreads);
 		
@@ -79,12 +79,17 @@ public class DMThreadUtil {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
+		
+		for (DMThread thread : threads) {
+			if (thread.getException() != null)
+				throw thread.getException();
+		}
 	}
 
-	public static void ExecuteCommand(CLOptions options) {
+	public static void ExecuteCommand(CLOptions options) throws Exception {
 
 		String type = options.getCmdType();
-		ArrayList<Thread> threads = new ArrayList<Thread>();
+		ArrayList<DMThread> threads = new ArrayList<DMThread>();
 		ArrayList<String> machinesList = new ArrayList<String>();
 
 		if (options.getMachineList().size() > 0)

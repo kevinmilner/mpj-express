@@ -52,7 +52,7 @@ public class MPJBoot {
 	 * }
 	 */
 
-	public void bootMPJExpress(CLOptions options) {
+	public void bootMPJExpress(CLOptions options) throws Exception {
 		DMThreadUtil.ExecuteCommand(options);
 	}
 
