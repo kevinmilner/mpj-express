@@ -64,8 +64,8 @@ public class IOMessagesThread extends Thread {
 			input = new Scanner(clientSock.getInputStream());
 			output = new PrintWriter(clientSock.getOutputStream(), true);
 			String message = input.nextLine();
-			while (!(message.endsWith("EXIT"))) {
-				if(!message.startsWith("@Ping#"))
+			while (!(message.startsWith("EXIT"))) {
+				if(!message.endsWith("@Ping#"))
 					System.out.println(message);
 				message = input.nextLine();
 			}

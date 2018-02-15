@@ -1178,6 +1178,7 @@ public class MPJRun {
 		// Creating a server socket for incoming connections
 		try {
 			servSock = new ServerSocket(SERVER_PORT);
+			servSock.setSoTimeout(60000);
 		}
 		catch (Exception e) {
 			System.err.println("[MPJRun.java]: Error opening server port..");
