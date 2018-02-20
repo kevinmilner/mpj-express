@@ -63,9 +63,10 @@ while [[ $TRIES -le $MAX_TRIES ]];do
 	if [[ $ret -eq 3 ]];then
 		echo "detected failure code, retrying"
 	else 
-		echo "run succedded or normal error, exiting. exit code: $ret"
+		echo "run succeeded or normal error, exiting. exit code: $ret"
 		exit $ret
 	fi
+	let SLEEP_TIME=TRIES+SLEEP_TIME
 	echo "sleeping for $SLEEP_TIME seconds"
 	sleep $SLEEP_TIME
 	let TRIES=TRIES+1

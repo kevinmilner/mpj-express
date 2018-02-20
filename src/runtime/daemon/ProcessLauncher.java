@@ -201,7 +201,7 @@ public class ProcessLauncher extends Thread {
 					logger.debug("Job Finished");
 
 				if (!DEBUG || !logger.isDebugEnabled()) {
-					File dir = new File(argManager.getUsersDir());
+					File dir = new File(argManager.getTicketDir());
 					if (dir.exists()) {
 						try {
 							FileUtils.deleteDirectory(dir);
@@ -257,7 +257,7 @@ public class ProcessLauncher extends Thread {
 
 		try {
 			if (!DEBUG || !logger.isDebugEnabled()) {
-				File dir = new File(argManager.getUsersDir());
+				File dir = new File(argManager.getTicketDir());
 				if (dir.exists())
 					FileUtils.deleteDirectory(dir);
 			}
