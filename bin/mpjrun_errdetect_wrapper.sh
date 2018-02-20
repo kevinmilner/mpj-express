@@ -29,6 +29,7 @@ fi
 
 MAX_TRIES=5
 TRIES=0
+ORIG_SLEEP_TIME=$SLEEP_TIME
 
 echo "COMMAND: $@"
 
@@ -66,7 +67,7 @@ while [[ $TRIES -le $MAX_TRIES ]];do
 		echo "run succeeded or normal error, exiting. exit code: $ret"
 		exit $ret
 	fi
-	let SLEEP_TIME=TRIES+SLEEP_TIME
+	let SLEEP_TIME=ORIG_SLEEP_TIME+SLEEP_TIME
 	echo "sleeping for $SLEEP_TIME seconds"
 	sleep $SLEEP_TIME
 	let TRIES=TRIES+1
