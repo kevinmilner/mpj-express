@@ -204,6 +204,8 @@ public class MPJDaemon {
 			System.out.println("Unable to attach to port!");
 			System.exit(3);
 		}
+		
+		System.out.println("serverSocket.isClosed() ? "+serverSocket.isClosed());
 
 		if (!serverSocket.isClosed())
 			try {
@@ -212,12 +214,15 @@ public class MPJDaemon {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("pManager == null ? "+(pManager == null));
 		if (pManager != null) {
 			pManager.isRun = false;
 		}
+		System.out.println("connectionManager == null ? "+(connectionManager == null));
 		if (connectionManager != null) {
 			connectionManager.isRun = false;
 		}
+		System.out.println("done serverSocketInit");
 	}
 
 	private void readValuesFromMPJExpressConf() {

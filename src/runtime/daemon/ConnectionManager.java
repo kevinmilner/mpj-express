@@ -42,49 +42,49 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class ConnectionManager extends Thread {
-  public volatile boolean isRun = true;
+	public volatile boolean isRun = true;
 
-  public ConnectionManager() {
-  }
-
-  public void run() {
-
-
-    while (isRun) {
-      for (Socket sock : MPJDaemon.servSockets.keySet()) {
-	OutputStream outToServer = null;
-	try {
-	  String line = "@Ping#\n";
-	  outToServer = sock.getOutputStream();
-	  DataOutputStream out = new DataOutputStream(outToServer);
-	  out.write(line.getBytes(), 0, line.getBytes().length);
-
+	public ConnectionManager() {
 	}
-	catch (Exception e) {
-          if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled())
-            MPJDaemon.logger.debug("Error 0.. ");
-	  System.out.println("Client Disconnected");
-	  MPJDaemon.servSockets.get(sock).killProcesses();
-	  MPJDaemon.servSockets.remove(sock);
+
+	public void run() {
+
+
+		while (isRun) {
+			for (Socket sock : MPJDaemon.servSockets.keySet()) {
+				OutputStream outToServer = null;
+				try {
+					String line = "@Ping#\n";
+					outToServer = sock.getOutputStream();
+					DataOutputStream out = new DataOutputStream(outToServer);
+					out.write(line.getBytes(), 0, line.getBytes().length);
+
+				}
+				catch (Exception e) {
+					if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled())
+						MPJDaemon.logger.debug("Error 0.. ");
+					System.out.println("Client Disconnected");
+					MPJDaemon.servSockets.get(sock).killProcesses();
+					MPJDaemon.servSockets.remove(sock);
+				}
+				try {
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException e) {
+					if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled())
+						MPJDaemon.logger.debug("Error 1.. ");
+					e.printStackTrace();
+				}
+			}
+			try {
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e) {
+				if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled())
+					MPJDaemon.logger.debug("Error 2 .. ");
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Exiting connection manager thread");
 	}
-	try {
-	  Thread.sleep(1000);
-	}
-	catch (InterruptedException e) {
-          if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled())
-            MPJDaemon.logger.debug("Error 1.. ");
-	  e.printStackTrace();
-	}
-      }
-      try {
-	Thread.sleep(1000);
-      }
-      catch (InterruptedException e) {
-        if (MPJDaemon.DEBUG && MPJDaemon.logger.isDebugEnabled())
-          MPJDaemon.logger.debug("Error 2 .. ");
-	e.printStackTrace();
-      }
-    }
-    System.out.println("Exiting connection manager thread");
-  }
 }
