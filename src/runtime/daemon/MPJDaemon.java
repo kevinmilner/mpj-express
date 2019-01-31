@@ -147,9 +147,9 @@ public class MPJDaemon {
 
 			try {
 				if (logLevel.toUpperCase().equals("DEBUG")) {
-//					fileAppender = new DailyRollingFileAppender(new PatternLayout(
-//							" %-5p %c %x - %m\n"), homeDir + "/logs/daemon-" + hostName
-//							+ ".log", "yyyy-MM-dd-a");
+					//					fileAppender = new DailyRollingFileAppender(new PatternLayout(
+					//							" %-5p %c %x - %m\n"), homeDir + "/logs/daemon-" + hostName
+					//							+ ".log", "yyyy-MM-dd-a");
 					fileAppender = new DailyRollingFileAppender(new PatternLayout(
 							" %-5p %c %x - %m\n"), "/tmp/mpj-daemon-"+System.getProperty("user.name")+"-" + hostName
 							+ ".log", "yyyy-MM-dd-a");
@@ -170,22 +170,29 @@ public class MPJDaemon {
 
 	private void serverSocketInit() {
 		if (DEBUG && logger.isDebugEnabled()) {
-			logger.debug("serverSocketInit called .. ");
+			logger.debug("serverSocketInit called for port "+D_SER_PORT);
 		}
 
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(D_SER_PORT);
+			if (DEBUG && logger.isDebugEnabled()) {
+				logger.debug("server socket timeout: "+serverSocket.getSoTimeout());
+			}
+			serverSocket.setSoTimeout(0);
 			do {
 				if (DEBUG && logger.isDebugEnabled()) {
 					logger.debug("Accepting connection ..");
 				}
 				Socket servSock = null; 
-//				try {
-					servSock = serverSocket.accept();
-//				} catch(Exception eee) { 
-//					eee.printStackTrace(); 
-//				} 
+				//				try {
+				servSock = serverSocket.accept();
+				//				} catch(Exception eee) { 
+				//					eee.printStackTrace(); 
+				//				}
+				if (DEBUG && logger.isDebugEnabled()) {
+					logger.debug("socket accepted, launching process");
+				}
 
 				// Connection is accepted and the socket passed onto 
 				// ProcessLauncher.java which takes care of the rest
@@ -207,7 +214,7 @@ public class MPJDaemon {
 			System.out.println("Unable to attach to port!");
 			System.exit(3);
 		}
-		
+
 		if (DEBUG && logger.isDebugEnabled()) logger.debug("serverSocket.isClosed() ? "+serverSocket.isClosed());
 
 		if (!serverSocket.isClosed())
