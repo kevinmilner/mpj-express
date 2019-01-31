@@ -147,8 +147,11 @@ public class MPJDaemon {
 
 			try {
 				if (logLevel.toUpperCase().equals("DEBUG")) {
+//					fileAppender = new DailyRollingFileAppender(new PatternLayout(
+//							" %-5p %c %x - %m\n"), homeDir + "/logs/daemon-" + hostName
+//							+ ".log", "yyyy-MM-dd-a");
 					fileAppender = new DailyRollingFileAppender(new PatternLayout(
-							" %-5p %c %x - %m\n"), homeDir + "/logs/daemon-" + hostName
+							" %-5p %c %x - %m\n"), "/tmp/mpj-daemon-"+System.getProperty("user.name")+"-" + hostName
 							+ ".log", "yyyy-MM-dd-a");
 
 					Logger rootLogger = Logger.getRootLogger();
