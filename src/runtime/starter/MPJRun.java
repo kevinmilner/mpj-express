@@ -1104,42 +1104,33 @@ public class MPJRun {
 		}
 
 	}
+	
+	private static int client_connect_retries = 5;
 
 	private void clientSocketInit() throws Exception {
 
 		for (int i = 0; i < machineList.size(); i++) {
 			String daemon = (String) machineList.get(i);
-			try {
-
-				if (DEBUG && logger.isDebugEnabled()) {
-					logger.debug("Connecting to " + daemon + "@" + D_SER_PORT);
-				}
+			Socket sockClient = null;
+			for (int r=0; r<client_connect_retries; r++) {
 				try {
-					Socket sockClient = new Socket(daemon, D_SER_PORT);
+					sockClient = new Socket(daemon, D_SER_PORT);
+					sockClient.setKeepAlive(true);
+					sockClient.setSoTimeout(0);
 					if (sockClient.isConnected())
-						peerSockets.add(sockClient);
-					else {
-
-						throw new MPJRuntimeException("Cannot connect to the daemon "
-								+ "at machine <" + daemon + "> and port <" + D_SER_PORT + ">."
-								+ "Please make sure that the machine is reachable "
-								+ "and running the daemon in 'sane' state");
-
-					}
+						break;
+				} catch (Exception e) {
+					System.out.println("Exception on attempt "+r+" to contact daemon "+i+" at "+daemon+": "+e.getMessage());
 				}
-				catch (IOException e3) {
-
-					throw new MPJRuntimeException("Cannot connect to the daemon "
-							+ "at machine <" + daemon + "> and port <" + D_SER_PORT + ">."
-							+ "Please make sure that the machine is reachable "
-							+ "and running the daemon in 'sane' state");
-				}
-
+				Thread.sleep(1000);
 			}
-			catch (Exception ccn1) {
-				System.out.println(" rest of the exceptions ");
-				throw ccn1;
-			}
+			if (sockClient != null && sockClient.isConnected())
+				peerSockets.add(sockClient);
+			else
+				throw new MPJRuntimeException("Cannot connect to the daemon "
+						+ "at machine <" + daemon + "> and port <" + D_SER_PORT + ">."
+						+ "Please make sure that the machine is reachable "
+						+ "and running the daemon in 'sane' state");
 		}
 
 	}

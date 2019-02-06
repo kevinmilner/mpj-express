@@ -679,7 +679,8 @@ public class NIODevice implements Device {
 		}
 		return selectedPort;
 	}
-
+	
+	private static final int client_connect_retries = 5;
 
 	public ProcessID[] init(String args[]) throws XDevException {
 
@@ -876,14 +877,30 @@ public class NIODevice implements Device {
 		catch (Exception ioe)  {
 			throw new XDevException(ioe);
 		}
+		
+		logger.debug("Connecting to :ServerName "+
+				serverName+" ServerPort "+serverPort);
 
-
+		for (int r=0; r<client_connect_retries; r++) {
+			try {
+				clientSock = new Socket(serverName, serverPort);
+				clientSock.setKeepAlive(true);
+				clientSock.setSoTimeout(0);
+				if (clientSock.isConnected())
+					break;
+				else
+					System.out.println("Not connected after attempt "+r+" to contact "+serverName+"");
+			} catch (Exception e) {
+				System.out.println("Exception on attempt "+r+" to contact "+serverName+": "+e.getMessage());
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {}
+		}
+		if (clientSock == null || !clientSock.isConnected())
+			throw new XDevException("Cannot connect to the machine <" + serverName + "> and port <" + serverPort + ">."
+					+ "Please make sure that the machine is reachable");
 		try{
-			logger.debug("Connecting to :ServerName "+
-					serverName+" ServerPort "+serverPort);
-
-			clientSock = new Socket(serverName,serverPort);   
-
 			logger.debug("Socket Connected "+clientSock.getInetAddress());
 
 			out = new DataOutputStream(clientSock.getOutputStream());
