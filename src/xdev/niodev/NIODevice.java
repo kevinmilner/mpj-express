@@ -886,12 +886,15 @@ public class NIODevice implements Device {
 				clientSock = new Socket(serverName, serverPort);
 				clientSock.setKeepAlive(true);
 				clientSock.setSoTimeout(0);
-				if (clientSock.isConnected())
+				if (clientSock.isConnected()) {
+					if (r > 0)
+						System.out.println("Succeeded on attempt "+r+" to contact "+serverName+" from "+localHostName);
 					break;
-				else
+				} else {
 					System.out.println("Not connected after attempt "+r+" to contact "+serverName+"");
+				}
 			} catch (Exception e) {
-				System.out.println("Exception on attempt "+r+" to contact "+serverName+": "+e.getMessage());
+				System.out.println("Exception on attempt "+r+" to contact "+serverName+" from "+localHostName+": "+e.getMessage());
 			}
 			try {
 				Thread.sleep(1000);
