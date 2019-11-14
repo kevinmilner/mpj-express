@@ -74,7 +74,7 @@
         
 	<javac srcdir="${src.dir}" 
 	classpath="lib/wrapper.jar:lib/org.mortbay.jetty.jar:
-		   lib/log4j-1.2.11.jar:lib/commons-cli-1.2.jar:
+		   lib/log4j-1.2.11.jar:lib/commons-cli-1.4.jar:
                    lib\commons-codec-1.8.jar:
                    lib\commons-io-2.4.jar"
         sourcepath="${src.dir}"
@@ -92,7 +92,7 @@
         <classpath>
           <fileset dir="lib">
             <include name="wrapper.jar org.mortbay.jetty.jar 
-                      log4j-1.2.11.jar commons-cli-1.2.jar 
+                      log4j-1.2.11.jar commons-cli-1.4.jar 
                       commons-codec-1.8.jar 
                       commons-io-2.4.jar" />
             </fileset>
@@ -280,7 +280,7 @@
             <attribute name="Main-class" 
                        value="runtime.daemonmanager.MPJDaemonManager" />
             <attribute name="Class-path"
-                       value="commons-cli-1.2.jar runtimecommon.jar"/>
+                       value="commons-cli-1.4.jar runtimecommon.jar"/>
           </manifest>
      </jar>
 
@@ -288,7 +288,7 @@
           includes="runtime/common/*.class">            
           <manifest>
             <attribute name="Class-path"
-                       value="commons-cli-1.2.jar
+                       value="commons-cli-1.4.jar
                               commons-codec-1.8.jar"/>
           </manifest>
      </jar>
@@ -422,7 +422,7 @@
     <target name="java-docs" depends="figures">
       <javadoc
         destdir="${doc.dir}/javadocs"
-	classpath="${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar:${lib.dir}/wrapper.jar:${lib.dir}/log4j-1.2.11.jar;${lib.dir}/commons-cli-1.2.jar">
+	classpath="${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar:${lib.dir}/wrapper.jar:${lib.dir}/log4j-1.2.11.jar;${lib.dir}/commons-cli-1.4.jar">
 			<fileset dir="${mpi.dir}" defaultexcludes="yes">
 				<include name="**/Cartcomm.java"/>
 				<include name="**/CartParms.java"/>
