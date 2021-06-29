@@ -58,7 +58,7 @@ public class CleanUpThread extends DMThread {
 
 	public void cleanUpAllJavaProcesses() {
 
-		String[] command = { "ssh", host, "pkill", "-9", "java", };
+		String[] command = MPJUtil.getSSHCommand(host, "pkill", "-9", "java");
 		ArrayList<String> consoleMessages = DaemonUtil.runProcess(command);
 		for (String message : consoleMessages) {
 			if (message.indexOf(DMMessages.UNKNOWN_HOST) > 0) {

@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -51,154 +51,178 @@ import runtime.daemonmanager.DMConstants;
 
 public class MPJUtil {
 
-  public static ArrayList<String> readMPJFile(String path) {
+	public static ArrayList<String> readMPJFile(String path) {
 
-    ArrayList<String> machineList = new ArrayList<String>();
-    FileInputStream stream = null;
-    InputStreamReader streamReader = null;
-    BufferedReader bufferedReader = null;
+		ArrayList<String> machineList = new ArrayList<String>();
+		FileInputStream stream = null;
+		InputStreamReader streamReader = null;
+		BufferedReader bufferedReader = null;
 
-    try {
-      stream = new FileInputStream(path);
-      streamReader = new InputStreamReader(stream, "UTF-8");
-      bufferedReader = new BufferedReader(streamReader);
-      String line = null;
-      while ((line = bufferedReader.readLine()) != null) {
-	line = line.trim();
-	if (line != "" && !machineList.contains(line)) {
-	  machineList.add(line);
+		try {
+			stream = new FileInputStream(path);
+			streamReader = new InputStreamReader(stream, "UTF-8");
+			bufferedReader = new BufferedReader(streamReader);
+			String line = null;
+			while ((line = bufferedReader.readLine()) != null) {
+				line = line.trim();
+				if (line != "" && !machineList.contains(line)) {
+					machineList.add(line);
+				}
+			}
+
+		}
+		catch (Exception exp) {
+
+			System.out.println("<" + path + "> file cannot " + " be found."
+					+ " The starter module assumes "
+					+ "it to be in the current directory.");
+			return null;
+
+		}
+		finally {
+			try {
+				bufferedReader.close();
+				stream.close();
+
+			}
+			catch (Exception e) {
+
+				// System.out.println(exp.getMessage());
+			}
+		}
+
+		return machineList;
 	}
-      }
 
-    }
-    catch (Exception exp) {
+	public static ArrayList<String> readMachineFile(String path) {
+		return readMPJFile(path);
+	}
 
-      System.out.println("<" + path + "> file cannot " + " be found."
-	  + " The starter module assumes "
-	  + "it to be in the current directory.");
-      return null;
+	public static String getConfigValue(String property) {
+		for (String configLine : readMPJExpressConfigFile()) {
+			if (configLine.indexOf(property) > -1) {
+				String[] tokens = configLine.split("=");
+				if (tokens.length > 1)
+					return tokens[1];
+			}
+		}
+		return "";
+	}
 
-    }
-    finally {
-      try {
-	bufferedReader.close();
-	stream.close();
+	public static ArrayList<String> readMPJExpressConfigFile() {
+		String path = getMPJExpressConfPath();
+		return readMPJFile(path);
+	}
 
-      }
-      catch (Exception e) {
+	public static String getMPJExpressConfPath() {
+		return getMPJHomeDir() + DMConstants.CONF + File.separator
+				+ DMConstants.MPJEXPRESS_CONF;
 
-	// System.out.println(exp.getMessage());
-      }
-    }
+	}
 
-    return machineList;
-  }
+	public static String getMPJHomeDir() {
+		String mpjHomeDir = RTConstants.MPJ_HOME_DIR;
+		if (mpjHomeDir != "") {
+			if (!mpjHomeDir.endsWith("/"))
+				mpjHomeDir = mpjHomeDir + File.separator;
+		}
+		return mpjHomeDir;
+	}
 
-  public static ArrayList<String> readMachineFile(String path) {
-    return readMPJFile(path);
-  }
+	public static String getMPJExpressLogPath() {
+		return getMPJHomeDir() + DMConstants.LOGS + File.separator
+				+ DMConstants.MPJEXPRESS_LOG;
+	}
 
-  public static String getConfigValue(String property) {
-    for (String configLine : readMPJExpressConfigFile()) {
-      if (configLine.indexOf(property) > -1) {
-	String[] tokens = configLine.split("=");
-	if (tokens.length > 1)
-	  return tokens[1];
-      }
-    }
-    return "";
-  }
+	public static String getJarPath(String jarName) {
+		return getMPJHomeDir() + DMConstants.LIB + File.separator + jarName
+				+ DMConstants.EXT_JAR;
+	}
 
-  public static ArrayList<String> readMPJExpressConfigFile() {
-    String path = getMPJExpressConfPath();
-    return readMPJFile(path);
-  }
+	public static String getMachineFilePath(String fileName) {
+		return fileName;
+	}
 
-  public static String getMPJExpressConfPath() {
-    return getMPJHomeDir() + DMConstants.CONF + File.separator
-	+ DMConstants.MPJEXPRESS_CONF;
+	public static String getMachineFilePath() {
+		return DMConstants.MACHINES;
+	}
 
-  }
+	public static boolean IsBusy(final InetAddress remote, int port) {
+		try {
+			Socket s = new Socket(remote, port);
+			s.close();
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
 
-  public static String getMPJHomeDir() {
-    String mpjHomeDir = RTConstants.MPJ_HOME_DIR;
-    if (mpjHomeDir != "") {
-      if (!mpjHomeDir.endsWith("/"))
-	mpjHomeDir = mpjHomeDir + File.separator;
-    }
-    return mpjHomeDir;
-  }
+	public static String FormatMessage(String host, String message) {
+		return "[" + host + "] " + message;
+	}
 
-  public static String getMPJExpressLogPath() {
-    return getMPJHomeDir() + DMConstants.LOGS + File.separator
-	+ DMConstants.MPJEXPRESS_LOG;
-  }
+	public static void readConfigFile() {
+		FileInputStream in = null;
+		DataInputStream din = null;
+		BufferedReader reader = null;
+		String line = "";
 
-  public static String getJarPath(String jarName) {
-    return getMPJHomeDir() + DMConstants.LIB + File.separator + jarName
-	+ DMConstants.EXT_JAR;
-  }
+		try {
 
-  public static String getMachineFilePath(String fileName) {
-    return fileName;
-  }
+			String path = getMPJExpressConfPath();
+			in = new FileInputStream(path);
+			din = new DataInputStream(in);
+			reader = new BufferedReader(new InputStreamReader(din));
 
-  public static String getMachineFilePath() {
-    return DMConstants.MACHINES;
-  }
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith(RTConstants.MPJ_DAEMON_PORT_KEY)) {
+					RTConstants.MPJ_DAEMON_PORT = confValue(line);
+				} else if (line.startsWith(RTConstants.MPJ_PORTMANAGER_PORT_KEY)) {
+					RTConstants.MPJ_PORTMANAGER_PORT = confValue(line);
+				} else if (line.startsWith(RTConstants.MPJ_DAEMON_LOGLEVEL_KEY)) {
+					RTConstants.MPJ_DAEMON_LOGLEVEL = confValue(line);
+				} 
+			}
 
-  public static boolean IsBusy(final InetAddress remote, int port) {
-    try {
-      Socket s = new Socket(remote, port);
-      s.close();
-      return true;
-    }
-    catch (Exception e) {
-      return false;
-    }
-  }
+			in.close();
 
-  public static String FormatMessage(String host, String message) {
-    return "[" + host + "] " + message;
-  }
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 
-  public static void readConfigFile() {
-    FileInputStream in = null;
-    DataInputStream din = null;
-    BufferedReader reader = null;
-    String line = "";
+	}
 
-    try {
-
-      String path = getMPJExpressConfPath();
-      in = new FileInputStream(path);
-      din = new DataInputStream(in);
-      reader = new BufferedReader(new InputStreamReader(din));
-
-      while ((line = reader.readLine()) != null) {
-	if (line.startsWith(RTConstants.MPJ_DAEMON_PORT_KEY)) {
-	  RTConstants.MPJ_DAEMON_PORT = confValue(line);
-	} else if (line.startsWith(RTConstants.MPJ_PORTMANAGER_PORT_KEY)) {
-	  RTConstants.MPJ_PORTMANAGER_PORT = confValue(line);
-	} else if (line.startsWith(RTConstants.MPJ_DAEMON_LOGLEVEL_KEY)) {
-	  RTConstants.MPJ_DAEMON_LOGLEVEL = confValue(line);
-	} 
-      }
-
-      in.close();
-
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
-
-  }
-
-  public static String confValue(String line) {
-    String trimmedLine = line.replaceAll("\\s+", "");
-    StringTokenizer tokenizer = new StringTokenizer(trimmedLine, "=");
-    tokenizer.nextToken();
-    return tokenizer.nextToken();
-  }
+	public static String confValue(String line) {
+		String trimmedLine = line.replaceAll("\\s+", "");
+		StringTokenizer tokenizer = new StringTokenizer(trimmedLine, "=");
+		tokenizer.nextToken();
+		return tokenizer.nextToken();
+	}
+	
+	public static String[] getSSHCommand(String host, String... command) {
+		String sshCommand = getConfigValue("mpjexpress.ssh.command");
+		if (sshCommand != null && !sshCommand.trim().isEmpty()) {
+			sshCommand = sshCommand.trim();
+			System.out.println("SSH command: "+sshCommand);
+			ArrayList<String> list = new ArrayList<>();
+			if (sshCommand.contains(" ")) {
+				for (String str : sshCommand.split(" "))
+					list.add(str);
+			} else {
+				list.add(sshCommand);
+			}
+			list.add(host);
+			for (String str : command)
+				list.add(str);
+			return list.toArray(new String[0]);
+		}
+		String[] ret = new String[command.length+2];
+		ret[0] = "ssh";
+		ret[1] = host;
+		System.arraycopy(command, 0, ret, 2, command.length);
+		return ret;
+	}
 
 }

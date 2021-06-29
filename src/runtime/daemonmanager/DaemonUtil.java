@@ -40,6 +40,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import runtime.common.MPJUtil;
+
 import java.io.File;
 
 public class DaemonUtil {
@@ -136,7 +139,7 @@ public class DaemonUtil {
 
   /* get details of Java processes on remote Linux system */
   public static ArrayList<String> getJavaProcesses(String host) {
-    String[] command = { "ssh", host, "jps", "-m", };
+    String[] command = MPJUtil.getSSHCommand(host, "jps", "-m");
     ArrayList<String> consoleMessages = runProcess(command);
     return consoleMessages;
   }

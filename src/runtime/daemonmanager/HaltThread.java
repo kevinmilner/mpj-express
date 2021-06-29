@@ -59,7 +59,7 @@ public class HaltThread extends DMThread {
 	public void haltMPJExpressDeamons() {
 		String pid = DaemonUtil.getMPJProcessID(host);
 		if (pid != "") {
-			String[] command = { "ssh", host, "kill", "-9", pid, };
+			String[] command = MPJUtil.getSSHCommand(host, "kill", "-9", pid);
 			ArrayList<String> consoleMessages = DaemonUtil.runProcess(command);
 			for (String message : consoleMessages) {
 				if (message.indexOf(DMMessages.UNKNOWN_HOST) > 0)

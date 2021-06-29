@@ -70,10 +70,9 @@ public class BootThread extends DMThread {
 		if (!validExecutionParams())
 			throw new IllegalStateException("Can't boot");
 
-		String[] command = { "ssh", host, "java", "-cp",
+		String[] command = MPJUtil.getSSHCommand(host, "java", "-cp",
 				MPJUtil.getJarPath("daemon") + ":.", "runtime.daemon.MPJDaemon",
-				port,
-		};
+				port);
 
 		ArrayList<String> consoleMessages = 
 				DaemonUtil.runProcess(command, false);
