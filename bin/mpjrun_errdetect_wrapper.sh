@@ -40,10 +40,10 @@ while [[ $TRIES -le $MAX_TRIES ]];do
 	# choose a new random port to try
 	DPORT=$(shuf -i 62000-64999 -n 1)
 	SPORT=$(shuf -i 60000-61999 -n 1)
-	echo "Daemon port: $DPORT. LSOF:"
-	lsof -i :$DPORT
-	echo "Server port: $SPORT. LSOF:"
-	lsof -i :$SPORT
+	echo "Daemon port: $DPORT"
+#	lsof -i :$DPORT
+	echo "Server port: $SPORT"
+#	lsof -i :$SPORT
 	echo "Booting MPJ daemons"
 	java -jar $MPJ_HOME/lib/daemonmanager.jar -boot -port $DPORT -m $MACHINEFILE
 	ret=$?
