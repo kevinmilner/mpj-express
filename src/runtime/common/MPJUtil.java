@@ -100,10 +100,10 @@ public class MPJUtil {
 
 	public static String getConfigValue(String property) {
 		for (String configLine : readMPJExpressConfigFile()) {
-			if (configLine.indexOf(property) > -1) {
-				String[] tokens = configLine.split("=");
-				if (tokens.length > 1)
-					return tokens[1];
+			configLine = configLine.trim();
+			if (configLine.startsWith(property) && configLine.contains("=")) {
+				String value = configLine.substring(configLine.indexOf("=")+1);
+				return value.trim();
 			}
 		}
 		return "";
