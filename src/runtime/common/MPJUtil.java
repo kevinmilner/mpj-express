@@ -205,7 +205,7 @@ public class MPJUtil {
 		String sshCommand = getConfigValue("mpjexpress.ssh.command");
 		if (sshCommand != null && !sshCommand.trim().isEmpty()) {
 			sshCommand = sshCommand.trim();
-			System.out.println("SSH command: "+sshCommand);
+//			System.out.println("SSH command: "+sshCommand);
 			ArrayList<String> list = new ArrayList<>();
 			if (sshCommand.contains(" ")) {
 				for (String str : sshCommand.split(" "))
