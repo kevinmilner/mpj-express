@@ -204,10 +204,18 @@ public class MPJUtil {
 	static boolean first_ssh_print = true;
 	
 	public static String[] getSSHCommand(String host, String... command) {
+		boolean first = false;
+		if (first_ssh_print) {
+			// might be the first time, see if we should print any customizations
+			synchronized (MPJUtil.class) {
+				first = first_ssh_print;
+				first_ssh_print = false;
+			}
+		}
 		String wrapperCommand = getConfigValue("mpjexpress.ssh.wrapper");
 		if (wrapperCommand != null && !wrapperCommand.trim().isEmpty()) {
 			wrapperCommand = wrapperCommand.trim();
-			if (first_ssh_print)
+			if (first)
 				System.out.println("SSH wrapper: "+wrapperCommand);
 			String[] wrapperArray = wrapperCommand.split(" ");
 			String[] command2 = new String[wrapperArray.length+command.length];
@@ -218,9 +226,8 @@ public class MPJUtil {
 		String sshCommand = getConfigValue("mpjexpress.ssh.command");
 		if (sshCommand != null && !sshCommand.trim().isEmpty()) {
 			sshCommand = sshCommand.trim();
-			if (first_ssh_print)
+			if (first)
 				System.out.println("SSH command: "+sshCommand);
-			first_ssh_print = false;
 			ArrayList<String> list = new ArrayList<>();
 			if (sshCommand.contains(" ")) {
 				for (String str : sshCommand.split(" "))
@@ -233,7 +240,6 @@ public class MPJUtil {
 				list.add(str);
 			return list.toArray(new String[0]);
 		}
-		first_ssh_print = false;
 		String[] ret = new String[command.length+2];
 		ret[0] = "ssh";
 		ret[1] = host;
