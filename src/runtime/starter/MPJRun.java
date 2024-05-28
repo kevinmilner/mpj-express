@@ -1120,7 +1120,7 @@ public class MPJRun {
 					if (sockClient.isConnected())
 						break;
 				} catch (Exception e) {
-					System.out.println("Exception on attempt "+r+" to contact daemon "+i+" at "+daemon+": "+e.getMessage());
+					System.out.println("Exception on attempt "+r+" to contact daemon "+i+" at "+daemon+" (port="+D_SER_PORT+"): "+e.getMessage());
 				}
 				Thread.sleep(1000);
 			}
