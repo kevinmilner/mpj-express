@@ -263,10 +263,13 @@ public class MPJDaemon {
 	}
 	public static void main(String args[]) {
 		try {
-			MPJDaemon dae = new MPJDaemon(args);
-		}
-		catch (Exception e) {
+			new MPJDaemon(args);
+			System.exit(0);
+		} catch (Throwable e) {
 			e.printStackTrace();
+			System.err.flush();
+			System.out.flush();
+			System.exit(1);
 		}
 	}
 }
