@@ -6,7 +6,7 @@
    School of Electrical Engineering and Computer Science (SEECS), 
    National University of Sciences and Technology (NUST)
    2. Khurram Shahzad, Mohsan Jameel, Aamir Shafi, Bryan Carpenter (2013 - 2013)
-   
+
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -51,35 +51,36 @@ import runtime.common.RTConstants;
 import runtime.daemonmanager.DMConstants;
 
 public class PortManagerThread extends Thread {
-  public volatile boolean isRun = true;
+	public volatile boolean isRun = true;
 
-  public PortManagerThread(int port) {
-    this.port = port;
-  }
+	public PortManagerThread(int port) {
+		this.port = port;
+	}
 
-  private int port;
+	private int port;
 
-  @Override
-  public void run() {
-    serverSocketInit();
-  }
+	@Override
+	public void run() {
+		serverSocketInit();
+	}
 
-  private void serverSocketInit() {
+	private void serverSocketInit() {
 
-    try {
-      ServerSocket servSock = new ServerSocket(port);
-      while (isRun) {
-	Socket sock = servSock.accept();
-	PortRequesterThread thread = new PortRequesterThread(sock);
-	thread.start();
-      }
+		try {
+			ServerSocket servSock = new ServerSocket(port);
+			while (isRun) {
+				Socket sock = servSock.accept();
+				PortRequesterThread thread = new PortRequesterThread(sock);
+				thread.start();
+			}
 
-    }
-    catch (Exception cce) {
+		}
+		catch (Exception cce) {
+			cce.printStackTrace();
+			System.err.println("Exception creating PortRequesterThread with port="+port+", exiting...");
+			System.exit(1);
+		}
 
-      System.exit(0);
-    }
-
-  }
+	}
 
 }

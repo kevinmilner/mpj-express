@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -263,6 +264,7 @@ public class MPJDaemon {
 	}
 	public static void main(String args[]) {
 		try {
+			Thread.setDefaultUncaughtExceptionHandler(new PrintAndExitUncaughtExceptionHandler());
 			new MPJDaemon(args);
 			System.exit(0);
 		} catch (Throwable e) {
@@ -272,4 +274,16 @@ public class MPJDaemon {
 			System.exit(1);
 		}
 	}
+	
+	public static class PrintAndExitUncaughtExceptionHandler implements UncaughtExceptionHandler {
+
+		@Override
+		public void uncaughtException(Thread t, Throwable e) {
+			e.printStackTrace();
+			System.err.println("PrintAndExitUncaughtExceptionHandler: Exception caught...exiting!");
+			System.exit(1);
+		}
+
+	}
+
 }
